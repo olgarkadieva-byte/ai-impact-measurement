@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Impact Measurement · Find out what your AI tools actually changed</title>
+<meta name="description" content="Free, open-source tool to measure the real impact of AI tools: adoption, task success, time saved, cost, ROI and payback, compared against a control group. Runs in your browser. By Olga Arkadieva.">
+<link rel="canonical" href="https://olgarkadieva-byte.github.io/ai-impact-measurement/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI Impact Measurement: find out what your AI tools actually changed">
+<meta property="og:description" content="Adoption, time saved, cost, ROI and a keep / fix / retire verdict for every AI tool, measured against a control group. Free and open source.">
+<meta property="og:url" content="https://olgarkadieva-byte.github.io/ai-impact-measurement/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Impact Measurement",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web browser, Python 3.10+",
+  "description": "Measures the real impact of AI tools: adoption, task success, time saved, cost, ROI and payback, using a difference-in-differences comparison against a control group, with a keep / fix / retire verdict.",
+  "url": "https://olgarkadieva-byte.github.io/ai-impact-measurement/",
+  "codeRepository": "https://github.com/olgarkadieva-byte/ai-impact-measurement",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "author": {"@type": "Person", "name": "Olga Arkadieva", "url": "https://olgarkadieva-byte.github.io/",
+             "sameAs": ["https://www.linkedin.com/in/olga-arkadieva-aigp-989677112/", "https://github.com/olgarkadieva-byte"]}
+}
+</script>
+<style>
+:root{--bg:#fbfbfc;--fg:#17181c;--muted:#5b5f6b;--line:#e2e4e9;--card:#ffffff;--soft:#f1f3f6;--accent:#2b59c3;--accent-fg:#fff;
+--keep:#1f7a4d;--keep-bg:#e3f4ea;--fix:#8a5a00;--fix-bg:#fff1d6;--retire:#a32a2a;--retire-bg:#fbe4e4;--naive:#8a8f9c}
+@media (prefers-color-scheme:dark){:root{--bg:#111215;--fg:#ececf0;--muted:#a1a5b1;--line:#2a2c33;--card:#181a1f;--soft:#1e2026;--accent:#8fb0ff;--accent-fg:#0d1220;
+--keep:#6fd19c;--keep-bg:#143022;--fix:#f0c060;--fix-bg:#33270c;--retire:#f08a8a;--retire-bg:#3a1717;--naive:#7c8190}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.hero{padding:64px 0 36px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+h1{font-size:clamp(2rem,4.6vw,3rem);line-height:1.1;letter-spacing:-.02em;margin:0 0 16px;max-width:18ch}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch;margin:0 0 26px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button.primary{background:var(--accent);color:var(--accent-fg);border:0;border-radius:10px;padding:13px 20px;font:inherit;font-weight:650;cursor:pointer}
+button.primary:disabled{opacity:.6;cursor:progress}
+a.secondary{padding:12px 18px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--fg);font-weight:600}
+.privacy{margin:18px 0 0;font-size:.92rem;color:var(--muted)}
+section{padding:36px 0;border-bottom:1px solid var(--line)}
+h2{font-size:1.35rem;margin:0 0 14px;letter-spacing:-.01em}
+.upload{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.drop{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:16px}
+.drop label{font-weight:650;display:block;margin-bottom:4px}
+.drop small{color:var(--muted);display:block;margin-bottom:10px}
+.drop .fname{font-size:.85rem;color:var(--muted);margin-top:6px}
+#results:empty{display:none}
+#results{padding:36px 0;border-bottom:1px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.tile b{display:block;font-size:1.7rem;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.tile span{color:var(--muted);font-size:.9rem}
+.verdicts{margin:14px 0 26px}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:.82rem;white-space:nowrap}
+.badge.keep{color:var(--keep);background:var(--keep-bg)}.badge.fix{color:var(--fix);background:var(--fix-bg)}.badge.retire{color:var(--retire);background:var(--retire-bg)}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto}
+.chart svg{width:100%;min-width:520px;height:auto;display:block}
+.chart .grid{stroke:var(--line)}.chart .grid.zero{stroke:var(--muted);stroke-dasharray:3 3}
+.chart .tick,.chart .axis{fill:var(--muted);font-size:12px}.chart .label{fill:var(--fg);font-size:13px}
+.chart .ci{stroke-width:4;stroke-linecap:round;opacity:.45}
+.chart .ci.keep,.chart .dot.keep{stroke:var(--keep);fill:var(--keep)}
+.chart .ci.fix,.chart .dot.fix{stroke:var(--fix);fill:var(--fix)}
+.chart .ci.retire,.chart .dot.retire{stroke:var(--retire);fill:var(--retire)}
+.chart .naive{fill:none;stroke:var(--naive);stroke-width:2}
+.legend{color:var(--muted);font-size:.88rem;margin:8px 0 26px}
+.key{display:inline-block;vertical-align:middle;margin-right:4px}
+.dot-key{width:12px;height:12px;border-radius:50%;background:var(--fg)}
+.naive-key{width:11px;height:11px;border:2px solid var(--naive);transform:rotate(45deg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{margin:0 0 6px;font-size:1.05rem;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.kpis b{display:block;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.kpis span{display:block;color:var(--muted);font-size:.82rem;line-height:1.3}
+.kpis em{display:block;color:var(--muted);font-size:.78rem;font-style:normal}
+.naive-note{font-size:.85rem;color:var(--muted);margin:4px 0}
+.card ul{margin:8px 0 0;padding-left:18px}.card li{margin:4px 0;font-size:.93rem}
+.error{background:var(--retire-bg);color:var(--fg);border:1px solid var(--retire);border-radius:10px;padding:14px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;counter-reset:s}
+.step{background:var(--soft);border-radius:12px;padding:16px}
+.step h3{font-size:1rem;margin:0 0 6px}.step h3::before{counter-increment:s;content:counter(s) ". ";color:var(--accent)}
+.step p{margin:0;color:var(--muted);font-size:.93rem}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+code{background:var(--soft);padding:1px 6px;border-radius:5px;font-size:.88em}
+footer{padding:28px 0 48px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">Free and open source · AI Impact Measurement</p>
+  <h1>Find out what your AI tools actually changed.</h1>
+  <p class="lede">Adoption, task success, time saved, cost, ROI and payback for every AI tool, measured against a group that
+  did not use it. Each tool gets a clear verdict: <span class="badge keep">Keep</span> <span class="badge fix">Fix</span> or <span class="badge retire">Retire</span>.</p>
+  <div class="actions">
+    <button class="primary" id="sample">Run on synthetic sample data</button>
+    <a class="secondary" href="https://github.com/olgarkadieva-byte/ai-impact-measurement">View the code on GitHub</a>
+  </div>
+  <p class="privacy">Your data never leaves this page: all calculations run in your browser and nothing is uploaded.</p>
+</div></header>
+
+<main>
+<div class="wrap"><div id="results" aria-live="polite"></div></div>
+
+<section><div class="wrap">
+  <h2>Use your own data</h2>
+  <p>Export two CSV files that follow the <a href="https://github.com/olgarkadieva-byte/ai-impact-measurement/blob/main/DATA_CONTRACT.md">data contract</a>, then choose them below.</p>
+  <div class="upload">
+    <div class="drop"><label for="tasks-file">tasks.csv</label><small>One row per task, from people who got the AI tool and a comparison group that did not, before and after rollout.</small>
+      <input type="file" id="tasks-file" accept=".csv,text/csv"><div class="fname" id="tasks-name">No file chosen</div></div>
+    <div class="drop"><label for="tools-file">tools.csv</label><small>One row per AI tool: how many people could use it, their hourly cost, license and build cost, and the quality guardrail.</small>
+      <input type="file" id="tools-file" accept=".csv,text/csv"><div class="fname" id="tools-name">No file chosen</div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step"><h3>Compare, don't just count</h3><p>Most AI ROI figures multiply self-reported minutes by a salary. This tool compares people who got the AI tool with a similar group who did not, before and after rollout.</p></div>
+    <div class="step"><h3>Remove what would have happened anyway</h3><p>A quieter month or a new process makes everyone faster. Subtracting the comparison group's change (difference-in-differences) keeps that out of the AI's credit.</p></div>
+    <div class="step"><h3>Show the uncertainty</h3><p>Every estimate comes with a 95% range. A saving is only called proven when the whole range is above zero.</p></div>
+    <div class="step"><h3>Guard quality</h3><p>Speed that creates rework is not a win. If rework rises past your guardrail, the verdict is Fix, however fast the tool is.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>How verdicts are decided</h2>
+  <table>
+    <thead><tr><th>Verdict</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge keep">Keep</span></td><td>The time saving is proven, the tool pays for itself, at least 30% of eligible people use it, and quality held.</td></tr>
+      <tr><td><span class="badge fix">Fix</span></td><td>Something specific is wrong: too few people use it, the saving is not proven yet, its value does not cover its cost, or quality slipped.</td></tr>
+      <tr><td><span class="badge retire">Retire</span></td><td>No evidence it saves time, or it costs more than it returns even in the best case.</td></tr>
+    </tbody>
+  </table>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  Built by <a href="https://olgarkadieva-byte.github.io/">Olga Arkadieva</a>, IAPP AI Governance Professional (AIGP).
+  The sample data is fully synthetic. Part of the free tools at <a href="https://smartailayer.com/">smartailayer.com</a>.
+</div></footer>
+<script src="app.js"></script>
+</body>
+</html>

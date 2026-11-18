@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiimpact"
+version = "0.1.0"
+description = "Measure what AI tools actually change: adoption, time saved, cost, ROI and a keep / fix / retire verdict, against a control group."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "CC-BY-NC-4.0" }
+authors = [{ name = "Olga Arkadieva" }]
+keywords = ["AI ROI", "AI measurement", "AI impact", "difference-in-differences", "AI governance", "AI adoption"]
+
+[project.scripts]
+aiimpact = "aiimpact.__main__:main"
+
+[tool.setuptools]
+packages = ["aiimpact"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,5 @@
+tool,eligible_users,hourly_rate_usd,monthly_license_usd_per_user,build_cost_usd,max_rework_increase
+Code Review Assistant,24,95,19,0,0.05
+Meeting Notes Summarizer,36,70,10,0,0.05
+Support Reply Drafter,30,45,0,18000,0.05
+Sales Email Writer,20,60,30,0,0.05
