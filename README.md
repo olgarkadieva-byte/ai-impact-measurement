@@ -74,7 +74,7 @@ To use your own data, export two CSV files that follow the **[data contract](DAT
 
 ## Related
 
-- [AI Governance & Measurement Kit](https://github.com/olgarkadieva-byte/ai-governance-measurement-kit): inventory, risk scoring and 34 framework-mapped AI controls.
+- [AI Governance Kit](https://github.com/olgarkadieva-byte/ai-governance-kit): the companion tool for governance. AI inventory, risk scoring and 34 AI controls mapped to NIST AI RMF, ISO/IEC 42001 and the EU AI Act.
 - [smartailayer.com](https://smartailayer.com/): free AI governance and measurement tools and articles.
 
 ## Author
