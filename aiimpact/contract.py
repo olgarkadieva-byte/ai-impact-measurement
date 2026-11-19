@@ -160,14 +160,14 @@ def parse_tools(rows: list[dict[str, str]]) -> list[Tool]:
 
 
 def read_tasks(path: str | Path) -> list[Task]:
-    with open(path, newline="", encoding="utf-8") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:  # utf-8-sig also reads Excel exports
         reader = csv.DictReader(f)
         _check_header(reader.fieldnames, TASK_COLUMNS, "tasks.csv")
         return parse_tasks(list(reader))
 
 
 def read_tools(path: str | Path) -> list[Tool]:
-    with open(path, newline="", encoding="utf-8") as f:
+    with open(path, newline="", encoding="utf-8-sig") as f:  # utf-8-sig also reads Excel exports
         reader = csv.DictReader(f)
         _check_header(reader.fieldnames, TOOL_COLUMNS, "tools.csv")
         return parse_tools(list(reader))

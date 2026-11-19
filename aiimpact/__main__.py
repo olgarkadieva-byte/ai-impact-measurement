@@ -46,6 +46,9 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         results = analyze(read_tools(args.tools), read_tasks(args.tasks))
+    except FileNotFoundError as exc:
+        print(f"error: file not found: {exc.filename}", file=sys.stderr)
+        return 2
     except (ContractError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

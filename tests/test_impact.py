@@ -172,3 +172,24 @@ def test_report_and_cli(demo, tmp_path, capsys):
     assert out.read_text().startswith("<!DOCTYPE html>")
     assert main(["summary", str(tasks_path), str(tools_path)]) == 0
     assert "KEEP" in capsys.readouterr().out
+
+
+def test_excel_export_with_bom_is_accepted(demo, tmp_path):
+    _, _, tasks_path, tools_path = demo
+    bom = tmp_path / "tasks_bom.csv"
+    bom.write_bytes(b"\xef\xbb\xbf" + tasks_path.read_bytes())
+    assert len(read_tasks(bom)) == len(read_tasks(tasks_path))
+
+
+def test_missing_file_gives_clear_error(demo, tmp_path, capsys):
+    _, _, _, tools_path = demo
+    assert main(["summary", str(tmp_path / "nope.csv"), str(tools_path)]) == 2
+    assert "file not found" in capsys.readouterr().err
+
+
+def test_tool_without_tasks_gives_clear_error(demo, tmp_path, capsys):
+    _, _, tasks_path, tools_path = demo
+    extra = tmp_path / "tools.csv"
+    extra.write_text(tools_path.read_text() + "Unused Tool,10,50,0,0,0.05\n")
+    assert main(["summary", str(tasks_path), str(extra)]) == 2
+    assert "Unused Tool" in capsys.readouterr().err

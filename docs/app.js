@@ -276,7 +276,11 @@ function show(html) { document.getElementById("results").innerHTML = html; }
 function showError(msg) { show(`<div class="error" role="alert"><b>Could not analyze the data.</b> ${esc(msg)}</div>`); }
 
 function run() {
-  if (!state.tasks || !state.tools) return;
+  if (!state.tasks || !state.tools) {
+    const missing = !state.tasks ? "tasks.csv" : "tools.csv";
+    show(`<div class="hint" role="status">Got it. Now choose <b>${missing}</b> to see the results.</div>`);
+    return;
+  }
   try {
     const results = analyze(parseTools(state.tools), parseTasks(state.tasks));
     show(render(results));
