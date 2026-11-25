@@ -74,6 +74,7 @@ To use your own data, export two CSV files that follow the **[data contract](DAT
 
 ## Related
 
+- [AgentMeter](https://github.com/olgarkadieva-byte/agentmeter): tests AI agents before release (task success, reliability, tool use, permission-policy violations, cost and latency) with a Ship / Hold / Block release gate. AgentMeter tests an agent before it ships; AI Impact Measurement measures what it changed after.
 - [AI Governance Kit](https://github.com/olgarkadieva-byte/ai-governance-kit): the companion tool for governance. AI inventory, risk scoring and 34 AI controls mapped to NIST AI RMF, ISO/IEC 42001 and the EU AI Act.
 - [smartailayer.com](https://smartailayer.com/): free AI governance and measurement tools and articles.
 
